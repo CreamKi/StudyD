@@ -819,6 +819,30 @@ document.addEventListener('DOMContentLoaded', () => {
         updateSidebarDisplay();
     });
     
+    // ⭐️ เพิ่ม 2 ฟังก์ชันใหม่นี้เข้าไป ⭐️
+    function startTimer() {
+        isPaused = false;
+        playPauseBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"></path></svg>`; // ไอคอน Pause
+        timerInterval = setInterval(() => {
+            if (timeLeft > 0) {
+                timeLeft--;
+                timerDisplayActive.textContent = formatTime(timeLeft);
+            } else {
+                clearInterval(timerInterval);
+                triggerConfetti();
+                saveActivity(currentSubject, 'timing', initialTime);
+                timerControls.classList.add('hidden');
+                finishTimerBtn.classList.remove('hidden');
+            }
+        }, 1000);
+    }
+
+    function pauseTimer() {
+        isPaused = true;
+        playPauseBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="currentColor"><path d="M8 5v14l11-7z"></path></svg>`; // ไอคอน Play
+        clearInterval(timerInterval);
+    }
+
     startBtn.addEventListener('click', () => {
         timerSubjectDisplay.textContent = currentSubject;
         counterSubjectDisplay.textContent = currentSubject;
@@ -847,15 +871,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
             mainApp.classList.add('hidden');
-            isPaused = true;
             timerDisplayActive.textContent = formatTime(timeLeft);
-            playPauseBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="currentColor"><path d="M8 5v14l11-7z"></path></svg>`;
             
             setBackground(timerScreen, timerBgVideo);
             
             timerScreen.classList.remove('hidden');
             timerControls.classList.remove('hidden');
             finishTimerBtn.classList.add('hidden');
+
+            startTimer();
         } else { 
             totalExercises = parseInt(exerciseInput.value);
             if (!totalExercises || totalExercises <= 0) {
@@ -875,24 +899,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     playPauseBtn.addEventListener('click', () => {
-        isPaused = !isPaused;
-        if (!isPaused) {
-            playPauseBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"></path></svg>`;
-            timerInterval = setInterval(() => {
-                if (timeLeft > 0) {
-                    timeLeft--;
-                    timerDisplayActive.textContent = formatTime(timeLeft);
-                } else {
-                    clearInterval(timerInterval);
-                    triggerConfetti();
-                    saveActivity(currentSubject, 'timing', initialTime);
-                    timerControls.classList.add('hidden');
-                    finishTimerBtn.classList.remove('hidden');
-                }
-            }, 1000);
+        if (isPaused) {
+            startTimer();
         } else {
-            playPauseBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="currentColor"><path d="M8 5v14l11-7z"></path></svg>`;
-            clearInterval(timerInterval);
+            pauseTimer();
         }
     });
 
@@ -906,6 +916,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     stopBtn.addEventListener('click', () => {
+        isPaused = true;
         clearInterval(timerInterval);
         const timeSpent = initialTime - timeLeft;
         if (timeSpent > 0) {
