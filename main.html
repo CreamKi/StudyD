@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyD</title>
+
+    <link rel="icon" href="bookwoow.png" type="image/png">
+
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family:Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+</head>
+<body>
+
+    <div class="app-container" id="main-app">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-container">
+                    <p class="logo-text" id="logo-text">StudyD</p>
+                    <div class="streak-counter" id="streak-counter">🔥 0 Days</div>
+                </div>
+                <div class="header-buttons">
+                    <button class="stats-btn" id="stats-btn">Stats</button>
+                    <button class="signup-btn" id="auth-btn">Sign in</button>
+                </div>
+            </div>
+
+            <div class="sidebar-content">
+                <h1 class="title">StudyD</h1>
+                <p class="subtitle">StudyD for everyone</p>
+
+                <p class="label">Select subject</p>
+                <div class="subject-chooser">
+                    <div id="subject-list-container">
+                        </div>
+                    </div>
+                
+                <div class="mode-chooser">
+                    <button class="mode-btn active" id="timing-btn">Timing</button>
+                    <button class="mode-btn" id="counting-btn">Counting</button>
+                </div>
+
+                <div class="input-area">
+                    <div class="input-box" id="timing-mode-box">
+                        <div class="timer-input-wrapper">
+                            <input type="number" id="hr-input" value="00" min="00" max="99" class="time-input exercise-input-style">
+                            <span>:</span>
+                            <input type="number" id="min-input" value="00" min="00" max="59" class="time-input exercise-input-style">
+                            <span>:</span>
+                            <input type="number" id="sec-input" value="00" min="00" max="59" class="time-input exercise-input-style">
+                        </div>
+                         <div class="timer-labels">
+                            <span>hr</span><span>min</span><span>sec</span>
+                        </div>
+                    </div>
+                    <div class="input-box hidden" id="counting-mode-box">
+                        <label for="exercise-input">How many exercises will you do?</label>
+                        <input type="number" id="exercise-input" class="exercise-input-style" value="00" min="01">
+                        <p class="exercise-unit-label">exercises</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <button class="background-toggle-btn" id="background-toggle-btn">Background</button>
+            <div class="placeholder-box">
+                <video id="preview-video" class="hidden" muted loop playsinline></video>
+            </div>
+            <button class="start-btn" id="start-btn">START</button>
+        </main>
+    </div>
+
+    <div class="fullscreen-activity hidden" id="timer-screen">
+        <video class="fullscreen-bg-video" loop muted playsinline></video>
+        <h2 class="active-subject-display" id="timer-subject-display"></h2>
+        <div class="timer-display-active">00:00:00</div>
+        <div class="timer-labels-active">
+            <span>hr</span>
+            <span>min</span>
+            <span>sec</span>
+        </div>
+        <div class="controls" id="timer-controls">
+            <button class="control-btn" id="play-pause-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="currentColor"><path d="M8 5v14l11-7z"></path></svg>
+            </button>
+            <button class="control-btn" id="stop-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="currentColor"><path d="M6 6h12v12H6z"></path></svg>
+            </button>
+        </div>
+        <button class="start-btn hidden" id="finish-timer-btn">Finish</button>
+    </div>
+
+    <div class="fullscreen-activity hidden" id="counter-screen">
+        <video class="fullscreen-bg-video" loop muted playsinline></video>
+        <h2 class="active-subject-display" id="counter-subject-display"></h2>
+        <div class="counter-display-active">0/20</div>
+        <div class="controls-counter" id="counter-controls">
+            <button class="count-action-btn" id="count-up-btn">count</button>
+            <button class="back-btn" id="back-from-counter-btn">Back to Main</button>
+        </div>
+        <button class="start-btn hidden" id="finish-counter-btn">Finish</button>
+    </div>
+    <div id="stats-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Activity Statistics</h2>
+                <button id="close-stats-modal" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="stats-tabs">
+                    <button class="tab-btn active" data-view="daily">Daily</button>
+                    <button class="tab-btn" data-view="monthly">Monthly</button>
+                    <button class="tab-btn" data-view="yearly">Yearly</button>
+                </div>
+                <div id="stats-display-area">
+                    </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="add-subject-modal" class="modal-overlay hidden">
+        <div class="add-subject-modal-content">
+            <button id="close-add-subject-modal" class="close-btn">&times;</button>
+            <h2>New subject</h2>
+            <input type="text" id="new-subject-name-input" placeholder="Enter subject name...">
+            <button id="confirm-add-subject-btn" class="add-subject-submit-btn">Add Subject</button>
+        </div>
+    </div>
+    <audio id="level-up-sound" src="level-up-191997.mp3" preload="auto"></audio>
+
+    <div class="background-panel" id="background-panel">
+        <p class="label">Choose your background</p>
+        <div class="video-previews" id="video-previews-panel">
+            <div class="video-option active" data-video-src="none">
+                <div class="no-video-preview"></div>
+                <span>Solid Color</span>
+            </div>
+            <div class="video-option" data-video-src="cafe.mp4">
+                <video src="cafe.mp4" muted loop playsinline preload="metadata"></video>
+                <span>Rainy Cafe</span>
+            </div>
+            <div class="video-option" data-video-src="book.mp4">
+                <video src="book.mp4" muted loop playsinline preload="metadata"></video>
+                <span>Book</span>
+            </div>
+            </div>
+    </div>
+
+    <div id="signin-modal" class="modal-overlay hidden">
+        <div class="signin-modal-content">
+            <button id="close-signin-modal" class="close-btn">&times;</button>
+            <h2>Sign In</h2>
+            <form id="login-form">
+                <label for="username-input">Email</label>
+                <input type="email" id="username-input" required>
+                
+                <label for="password-input">Password</label>
+                <input type="password" id="password-input" required>
+                
+                <p class="form-error-message hidden" id="login-error-message"></p>
+                
+                <button type="submit" class="add-subject-submit-btn" style="background-color: var(--light-blue); color: var(--dark-blue);">Login</button>
+                
+                <a href="#" id="forgot-password-link" class="form-link">Forgot Password?</a>
+            </form>
+            <p class="form-switch-text">
+                Don't have an account? <a href="#" id="show-signup-link">Sign Up</a>
+            </p>
+        </div>
+    </div>
+
+    <div id="signup-modal" class="modal-overlay hidden">
+        <div class="signin-modal-content">
+            <button id="close-signup-modal" class="close-btn">&times;</button>
+            <h2>Sign Up</h2>
+            <form id="signup-form">
+                <label for="signup-email-input">Email</label>
+                <input type="email" id="signup-email-input" required>
+                <label for="signup-password-input">Password</label>
+                <input type="password" id="signup-password-input" required>
+
+                <p class="form-error-message hidden" id="signup-error-message"></p>
+
+                <button type="submit" class="add-subject-submit-btn" style="background-color: var(--light-blue); color: var(--dark-blue);">Create Account</button>
+            </form>
+            <p class="form-switch-text">
+                Already have an account? <a href="#" id="show-signin-link">Sign In</a>
+            </p>
+        </div>
+    </div>
+
+    <div id="forgot-password-modal" class="modal-overlay hidden">
+        <div class="signin-modal-content">
+            <button id="close-forgot-password-modal" class="close-btn">&times;</button>
+            <h2>Reset Password</h2>
+            <form id="forgot-password-form">
+                <label for="forgot-email-input">Enter your email</label>
+                <input type="email" id="forgot-email-input" required>
+                
+                <p class="form-message hidden" id="forgot-message"></p>
+
+                <button type="submit" class="add-subject-submit-btn" style="background-color: var(--light-blue); color: var(--dark-blue);">Send Reset Email</button>
+            </form>
+            <p class="form-switch-text">
+                <a href="#" id="show-signin-link-from-forgot">← Back to Sign In</a>
+            </p>
+        </div>
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    
+    <script type="module" src="script.js"></script>
+</body>
+</html>
